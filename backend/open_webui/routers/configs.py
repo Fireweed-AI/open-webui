@@ -536,3 +536,34 @@ async def get_banners(
     user=Depends(get_verified_user),
 ):
     return request.app.state.config.BANNERS
+
+
+############################
+# Default System Prompt
+############################
+
+
+class DefaultSystemPromptForm(BaseModel):
+    system_prompt: str
+
+
+@router.get("/default_system_prompt", response_model=DefaultSystemPromptForm)
+async def get_default_system_prompt(
+    request: Request,
+    user=Depends(get_admin_user),
+):
+    return {
+        "system_prompt": request.app.state.config.DEFAULT_SYSTEM_PROMPT,
+    }
+
+
+@router.post("/default_system_prompt", response_model=DefaultSystemPromptForm)
+async def set_default_system_prompt(
+    request: Request,
+    form_data: DefaultSystemPromptForm,
+    user=Depends(get_admin_user),
+):
+    request.app.state.config.DEFAULT_SYSTEM_PROMPT = form_data.system_prompt
+    return {
+        "system_prompt": request.app.state.config.DEFAULT_SYSTEM_PROMPT,
+    }
