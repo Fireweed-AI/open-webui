@@ -849,14 +849,15 @@
 						autoplay
 						class="rounded-2xl h-full min-w-full object-cover object-center"
 						playsinline
-					/>
+					></video>
 
-					<canvas id="camera-canvas" style="display:none;" />
+					<canvas id="camera-canvas" style="display:none;"></canvas>
 
 					<div class=" absolute top-4 md:top-8 left-4">
 						<button
 							type="button"
 							class="p-1.5 text-white cursor-pointer backdrop-blur-xl bg-black/10 rounded-full"
+							aria-label={$i18n.t('Stop camera')}
 							on:click={() => {
 								stopCamera();
 							}}
@@ -889,7 +890,11 @@
 							await startVideoStream();
 						}}
 					>
-						<button class=" p-3 rounded-full bg-gray-50 dark:bg-gray-900" type="button">
+						<button
+							class=" p-3 rounded-full bg-gray-50 dark:bg-gray-900"
+							type="button"
+							aria-label={$i18n.t('Switch camera')}
+						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								viewBox="0 0 20 20"
@@ -909,6 +914,7 @@
 						<button
 							class=" p-3 rounded-full bg-gray-50 dark:bg-gray-900"
 							type="button"
+							aria-label={$i18n.t('Camera')}
 							on:click={async () => {
 								await navigator.mediaDevices.getUserMedia({ video: true });
 								startCamera();
@@ -962,6 +968,7 @@
 			<div>
 				<button
 					class=" p-3 rounded-full bg-gray-50 dark:bg-gray-900"
+					aria-label={$i18n.t('Close voice mode')}
 					on:click={async () => {
 						await stopAudioStream();
 						await stopVideoStream();

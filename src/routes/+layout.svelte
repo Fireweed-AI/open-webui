@@ -358,7 +358,7 @@
 						if ($settings?.notificationEnabled ?? false) {
 							new Notification(`${title} • Open WebUI`, {
 								body: content,
-								icon: `${WEBUI_BASE_URL}/static/favicon.png`
+								icon: `/static/favicon.png`
 							});
 						}
 					}
@@ -587,8 +587,98 @@
 		}
 	};
 
+	const SAVE_ACTION_BUTTON_CLASS = 'save-action-button';
+	const normalizeButtonText = (value) => (value ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+
+	const shouldApplySaveActionStyle = (button) => {
+		if (!button || button.id === 'auth-submit-button') {
+			return false;
+		}
+
+		// Keep code-copy save icon controls on their own icon-only styling.
+		if (button.classList?.contains('save-code-button')) {
+			return false;
+		}
+
+		const buttonText = normalizeButtonText(button.textContent);
+		const labels = [
+			buttonText,
+			normalizeButtonText(button.getAttribute('aria-label')),
+			normalizeButtonText(button.getAttribute('title'))
+		];
+
+		if (labels.some((label) => label.startsWith('save'))) {
+			return true;
+		}
+
+		// Only auto-style inferred save buttons when they are text actions (not icon-only controls).
+		if (!buttonText) {
+			return button.classList?.contains('save-message-button') ?? false;
+		}
+
+		const identity = normalizeButtonText(`${button.id ?? ''} ${button.className ?? ''}`);
+		if (identity.includes('save-code-button')) {
+			return false;
+		}
+
+		return /\bsave(?!d)\b/.test(identity);
+	};
+
+	const syncSaveActionButtons = () => {
+		if (typeof document === 'undefined') {
+			return;
+		}
+
+		document.querySelectorAll('button').forEach((button) => {
+			if (shouldApplySaveActionStyle(button)) {
+				button.classList.add(SAVE_ACTION_BUTTON_CLASS);
+			} else {
+				button.classList.remove(SAVE_ACTION_BUTTON_CLASS);
+			}
+		});
+	};
+
+	const setupSaveActionButtonObserver = () => {
+		if (typeof document === 'undefined' || !document.body) {
+			return () => {};
+		}
+
+		let frameId = null;
+		const scheduleSync = () => {
+			if (frameId !== null) {
+				return;
+			}
+
+			frameId = window.requestAnimationFrame(() => {
+				frameId = null;
+				syncSaveActionButtons();
+			});
+		};
+
+		const observer = new MutationObserver(() => {
+			scheduleSync();
+		});
+
+		observer.observe(document.body, {
+			subtree: true,
+			childList: true,
+			attributes: true,
+			attributeFilter: ['class', 'id', 'aria-label', 'title']
+		});
+
+		scheduleSync();
+
+		return () => {
+			observer.disconnect();
+			if (frameId !== null) {
+				window.cancelAnimationFrame(frameId);
+			}
+		};
+	};
+
 	onMount(async () => {
 		let touchstartY = 0;
+		const stopSaveActionButtonObserver = setupSaveActionButtonObserver();
 
 		function isNavOrDescendant(el) {
 			const nav = document.querySelector('nav'); // change selector if needed
@@ -803,13 +893,14 @@
 
 		return () => {
 			window.removeEventListener('resize', onResize);
+			stopSaveActionButtonObserver();
 		};
 	});
 </script>
 
-<svelte:head>
-	<title>{$WEBUI_NAME}</title>
-	<link crossorigin="anonymous" rel="icon" href="{WEBUI_BASE_URL}/static/favicon.png" />
+	<svelte:head>
+		<title>{$WEBUI_NAME}</title>
+		<link rel="icon" href="/static/favicon.png" />
 
 	<meta name="apple-mobile-web-app-title" content={$WEBUI_NAME} />
 	<meta name="description" content={$WEBUI_NAME} />

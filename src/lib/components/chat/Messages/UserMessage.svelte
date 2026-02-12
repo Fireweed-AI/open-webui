@@ -230,6 +230,7 @@
 													? ''
 													: 'group-hover:visible invisible transition'}"
 												type="button"
+												aria-label={$i18n.t('Remove image')}
 												on:click={() => {
 													editedFiles.splice(fileIdx, 1);
 
@@ -294,14 +295,14 @@
 									document.getElementById('confirm-edit-message-button')?.click();
 								}
 							}}
-						/>
+						></textarea>
 					</div>
 
 					<div class=" mt-2 mb-1 flex justify-between text-sm font-medium">
 						<div>
 							<button
 								id="save-edit-message-button"
-								class="px-3.5 py-1.5 bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 border border-gray-100 dark:border-gray-700 text-gray-700 dark:text-gray-200 transition rounded-3xl"
+								class="save-message-button px-3.5 py-1.5 bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 border border-gray-100 dark:border-gray-700 text-gray-700 dark:text-gray-200 transition rounded-3xl"
 								on:click={() => {
 									editMessageConfirmHandler(false);
 								}}
@@ -367,6 +368,7 @@
 							<div class="flex self-center" dir="ltr">
 								<button
 									class="self-center p-1 hover:bg-black/5 dark:hover:bg-white/5 dark:hover:text-white hover:text-black rounded-md transition"
+									aria-label={$i18n.t('Previous message version')}
 									on:click={() => {
 										showPreviousMessage(message);
 									}}
@@ -434,6 +436,7 @@
 
 								<button
 									class="self-center p-1 hover:bg-black/5 dark:hover:bg-white/5 dark:hover:text-white hover:text-black rounded-md transition"
+									aria-label={$i18n.t('Next message version')}
 									on:click={() => {
 										showNextMessage(message);
 									}}
@@ -462,6 +465,7 @@
 								class="{($settings?.highContrastMode ?? false)
 									? ''
 									: 'invisible group-hover:visible'} p-1.5 hover:bg-black/5 dark:hover:bg-white/5 rounded-lg dark:hover:text-white hover:text-black transition edit-user-message-button"
+								aria-label={$i18n.t('Edit')}
 								on:click={() => {
 									editMessageHandler();
 								}}
@@ -489,7 +493,8 @@
 							<button
 								class="{($settings?.highContrastMode ?? false)
 									? ''
-									: 'invisible group-hover:visible'} p-1.5 hover:bg-black/5 dark:hover:bg-white/5 rounded-lg dark:hover:text-white hover:text-black transition"
+									: 'invisible group-hover:visible'} p-1.5 hover:bg-black/5 dark:hover:bg-white/5 rounded-lg dark:hover:text-white hover:text-black transition copy-user-message-button"
+								aria-label={$i18n.t('Copy')}
 								on:click={() => {
 									copyToClipboard(message.content);
 								}}
@@ -519,6 +524,7 @@
 									class="{($settings?.highContrastMode ?? false)
 										? ''
 										: 'invisible group-hover:visible'} p-1 rounded-sm dark:hover:text-white hover:text-black transition"
+									aria-label={$i18n.t('Delete')}
 									on:click={() => {
 										showDeleteConfirm = true;
 									}}
@@ -547,6 +553,7 @@
 							<div class="flex self-center" dir="ltr">
 								<button
 									class="self-center p-1 hover:bg-black/5 dark:hover:bg-white/5 dark:hover:text-white hover:text-black rounded-md transition"
+									aria-label={$i18n.t('Previous message version')}
 									on:click={() => {
 										showPreviousMessage(message);
 									}}
@@ -614,6 +621,7 @@
 
 								<button
 									class="self-center p-1 hover:bg-black/5 dark:hover:bg-white/5 dark:hover:text-white hover:text-black rounded-md transition"
+									aria-label={$i18n.t('Next message version')}
 									on:click={() => {
 										showNextMessage(message);
 									}}

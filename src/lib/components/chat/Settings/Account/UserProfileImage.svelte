@@ -7,8 +7,6 @@
 	import { getGravatarUrl } from '$lib/apis/utils';
 	import { canvasPixelTest, generateInitialsImage } from '$lib/utils';
 
-	import { WEBUI_BASE_URL } from '$lib/constants';
-
 	export let profileImageUrl;
 	export let user = null;
 
@@ -88,11 +86,11 @@
 				profileImageInputElement.click();
 			}}
 		>
-			<img
-				src={profileImageUrl !== '' ? profileImageUrl : generateInitialsImage(user?.name)}
-				alt="profile"
-				class=" rounded-full {imageClassName} object-cover"
-			/>
+				<img
+					src={profileImageUrl !== '' ? profileImageUrl : generateInitialsImage(user?.name)}
+					alt="profile"
+					class=" rounded-full {imageClassName} object-cover"
+				/>
 
 			<div class="absolute bottom-0 right-0 opacity-0 group-hover:opacity-100 transition">
 				<div class="p-1 rounded-full bg-white text-black border-gray-100 shadow">
@@ -102,9 +100,9 @@
 						fill="currentColor"
 						class="size-3"
 					>
-						<path
-							d="m2.695 14.762-1.262 3.155a.5.5 0 0 0 .65.65l3.155-1.262a4 4 0 0 0 1.343-.886L17.5 5.501a2.121 2.121 0 0 0-3-3L3.58 13.419a4 4 0 0 0-.885 1.343Z"
-						/>
+							<path
+								d="m2.695 14.762-1.262 3.155a.5.5 0 0 0 .65.65l3.155-1.262a4 4 0 0 0 1.343-.886L17.5 5.501a2.121 2.121 0 0 0-3-3L3.58 13.419a4 4 0 0 0-.885 1.343Z"
+							/>
 					</svg>
 				</div>
 			</div>
@@ -115,7 +113,7 @@
 			class=" text-xs text-center text-gray-500 rounded-lg py-0.5 opacity-0 group-hover:opacity-100 transition-all"
 			type="button"
 			on:click={async () => {
-				profileImageUrl = `${WEBUI_BASE_URL}/user.png`;
+				profileImageUrl = '/user.png';
 			}}>{$i18n.t('Remove')}</button
 		>
 

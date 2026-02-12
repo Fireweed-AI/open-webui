@@ -317,8 +317,8 @@
 					getModelList();
 				};
 
-				reader.readAsText(importFiles[0]);
-			}}
+					reader.readAsText(importFiles[0]);
+				}}
 		/>
 		<div class="flex justify-between items-center">
 			<div class="flex items-center md:self-center text-xl font-medium px-0.5 gap-2 shrink-0">
@@ -361,7 +361,7 @@
 					class=" px-2 py-1.5 rounded-xl bg-black text-white dark:bg-white dark:text-black transition font-medium text-sm flex items-center"
 					href="/workspace/models/create"
 				>
-					<Plus className="size-3" strokeWidth="2.5" />
+					<Plus className="size-3" strokeWidth="2.5"  />
 
 					<div class=" hidden md:block md:ml-1 text-xs">{$i18n.t('New Model')}</div>
 				</a>
@@ -375,7 +375,7 @@
 		<div class="px-3.5 flex flex-1 items-center w-full space-x-2 py-0.5 pb-2">
 			<div class="flex flex-1 items-center">
 				<div class=" self-center ml-1 mr-3">
-					<Search className="size-3.5" />
+					<Search className="size-3.5"  />
 				</div>
 				<input
 					class=" w-full text-sm py-1 rounded-r-xl outline-hidden bg-transparent"
@@ -391,7 +391,7 @@
 								query = '';
 							}}
 						>
-							<XMark className="size-3" strokeWidth="2" />
+							<XMark className="size-3" strokeWidth="2"  />
 						</button>
 					</div>
 				{/if}
@@ -460,7 +460,7 @@
 											src={`${WEBUI_API_BASE_URL}/models/model/profile/image?id=${model.id}&lang=${$i18n.language}`}
 											alt="modelfile profile"
 											class=" rounded-2xl size-12 object-cover"
-										/>
+										 />
 									</div>
 								</div>
 							</div>
@@ -498,7 +498,7 @@
 																		}}
 																	>
 																		{#if model?.meta?.hidden}
-																			<EyeSlash />
+																			<EyeSlash  />
 																		{:else}
 																			<Eye />
 																		{/if}
@@ -514,7 +514,7 @@
 																			deleteModelHandler(model);
 																		}}
 																	>
-																		<GarbageBin />
+																		<GarbageBin  />
 																	</button>
 																</Tooltip>
 															{:else}
@@ -550,7 +550,7 @@
 																	<div
 																		class="self-center w-fit p-1 text-sm dark:text-white hover:bg-black/5 dark:hover:bg-white/5 rounded-xl"
 																	>
-																		<EllipsisHorizontal className="size-5" />
+																		<EllipsisHorizontal className="size-5"  />
 																	</div>
 																</ModelMenu>
 															{/if}
@@ -626,7 +626,7 @@
 			</div>
 
 			{#if total > 30}
-				<Pagination bind:page count={total} perPage={30} />
+				<Pagination bind:page count={total} perPage={30}  />
 			{/if}
 		{:else}
 			<div class=" w-full h-full flex flex-col justify-center items-center my-16 mb-24">
@@ -644,7 +644,7 @@
 	{#if $config?.features.enable_community_sharing}
 		<div class=" my-16">
 			<div class=" text-xl font-medium mb-1 line-clamp-1">
-				{$i18n.t('Made by Open WebUI Community')}
+				{$i18n.t('Made by Fireweed AI')}
 			</div>
 
 			<a
@@ -661,7 +661,7 @@
 
 				<div>
 					<div>
-						<ChevronRight />
+						<ChevronRight  />
 					</div>
 				</div>
 			</a>
@@ -669,6 +669,6 @@
 	{/if}
 {:else}
 	<div class="w-full h-full flex justify-center items-center">
-		<Spinner className="size-5" />
+		<Spinner className="size-5"  />
 	</div>
 {/if}

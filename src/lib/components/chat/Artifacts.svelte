@@ -126,6 +126,7 @@
 							<button
 								class="self-center p-1 hover:bg-black/5 dark:hover:bg-white/5 dark:hover:text-white hover:text-black rounded-md transition disabled:cursor-not-allowed"
 								on:click={() => navigateContent('prev')}
+								aria-label={$i18n.t('Previous version')}
 								disabled={contents.length <= 1}
 							>
 								<svg
@@ -154,6 +155,7 @@
 							<button
 								class="self-center p-1 hover:bg-black/5 dark:hover:bg-white/5 dark:hover:text-white hover:text-black rounded-md transition disabled:cursor-not-allowed"
 								on:click={() => navigateContent('next')}
+								aria-label={$i18n.t('Next version')}
 								disabled={contents.length <= 1}
 							>
 								<svg

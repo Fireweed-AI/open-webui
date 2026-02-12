@@ -177,9 +177,9 @@
 	</DeleteConfirmDialog>
 
 	<div class="flex flex-col gap-1 px-1 mt-1.5 mb-3">
-		<input
-			id="prompts-import-input"
-			bind:this={promptsImportInputElement}
+			<input
+				id="prompts-import-input"
+				bind:this={promptsImportInputElement}
 			bind:files={importFiles}
 			type="file"
 			accept=".json"
@@ -210,9 +210,9 @@
 					promptsImportInputElement.value = '';
 				};
 
-				reader.readAsText(importFiles[0]);
-			}}
-		/>
+					reader.readAsText(importFiles[0]);
+				}}
+			/>
 		<div class="flex justify-between items-center">
 			<div class="flex items-center md:self-center text-xl font-medium px-0.5 gap-2 shrink-0">
 				<div>
@@ -257,7 +257,7 @@
 					class=" px-2 py-1.5 rounded-xl bg-black text-white dark:bg-white dark:text-black transition font-medium text-sm flex items-center"
 					href="/workspace/prompts/create"
 				>
-					<Plus className="size-3" strokeWidth="2.5" />
+					<Plus className="size-3" strokeWidth="2.5"  />
 
 					<div class=" hidden md:block md:ml-1 text-xs">{$i18n.t('New Prompt')}</div>
 				</a>
@@ -271,7 +271,7 @@
 		<div class=" flex w-full space-x-2 py-0.5 px-3.5 pb-2">
 			<div class="flex flex-1">
 				<div class=" self-center ml-1 mr-3">
-					<Search className="size-3.5" />
+					<Search className="size-3.5"  />
 				</div>
 				<input
 					class=" w-full text-sm pr-4 py-1 rounded-r-xl outline-hidden bg-transparent"
@@ -287,7 +287,7 @@
 								query = '';
 							}}
 						>
-							<XMark className="size-3" strokeWidth="2" />
+							<XMark className="size-3" strokeWidth="2"  />
 						</button>
 					</div>
 				{/if}
@@ -360,7 +360,7 @@
 											deleteHandler(prompt);
 										}}
 									>
-										<GarbageBin />
+										<GarbageBin  />
 									</button>
 								</Tooltip>
 							{:else}
@@ -384,7 +384,7 @@
 										class="self-center w-fit text-sm p-1.5 dark:text-gray-300 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 rounded-xl"
 										type="button"
 									>
-										<EllipsisHorizontal className="size-5" />
+										<EllipsisHorizontal className="size-5"  />
 									</button>
 								</PromptMenu>
 							{/if}
@@ -408,7 +408,7 @@
 	{#if $config?.features.enable_community_sharing}
 		<div class=" my-16">
 			<div class=" text-xl font-medium mb-1 line-clamp-1">
-				{$i18n.t('Made by Open WebUI Community')}
+				{$i18n.t('Made by Fireweed AI')}
 			</div>
 
 			<a
@@ -425,7 +425,7 @@
 
 				<div>
 					<div>
-						<ChevronRight />
+						<ChevronRight  />
 					</div>
 				</div>
 			</a>
@@ -433,6 +433,6 @@
 	{/if}
 {:else}
 	<div class="w-full h-full flex justify-center items-center">
-		<Spinner className="size-5" />
+		<Spinner className="size-5"  />
 	</div>
 {/if}

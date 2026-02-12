@@ -1,0 +1,9 @@
+html:root {
+	--primary: #7338a0;
+	/* Accent-only purple branding */
+	--color-blue-500: #7338a0;
+	--color-blue-600: #632f8a;
+	--color-indigo-500: #7338a0;
+	--color-indigo-600: #632f8a;
+	--color-purple-500: #7338a0;
+}

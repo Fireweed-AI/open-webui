@@ -423,7 +423,7 @@
 			on:focus={(e) => {}}
 			draggable="false"
 		>
-			<div class=" flex self-center flex-1 w-full">
+			<div class=" flex self-center flex-1 min-w-0 pr-8">
 				<div dir="auto" class=" text-left self-center overflow-hidden w-full h-[20px] truncate">
 					{title}
 				</div>
@@ -548,6 +548,7 @@
 					<button
 						id="delete-chat-button"
 						class="hidden"
+						aria-label="Delete Chat"
 						on:click={() => {
 							showDeleteConfirm = true;
 						}}

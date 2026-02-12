@@ -64,7 +64,9 @@
 	}
 </script>
 
-<div class="mb-1 flex gap-1 text-xs font-medium items-center text-gray-600 dark:text-gray-400">
+<div
+	class="suggestions-header mb-1 flex gap-1 text-xs font-medium items-center text-gray-600 dark:text-gray-400"
+>
 	{#if filteredPrompts.length > 0}
 		<Bolt />
 		{$i18n.t('Suggested')}
@@ -88,7 +90,7 @@
 				<!-- svelte-ignore a11y-no-interactive-element-to-noninteractive-role -->
 				<button
 					role="listitem"
-					class="waterfall flex flex-col flex-1 shrink-0 w-full justify-between
+					class="suggestion-item waterfall flex flex-col flex-1 shrink-0 w-full justify-between
 				       px-3 py-2 rounded-xl bg-transparent hover:bg-black/5
 				       dark:hover:bg-white/5 transition group"
 					style="animation-delay: {idx * 60}ms"
@@ -97,20 +99,24 @@
 					<div class="flex flex-col text-left">
 						{#if prompt.title && prompt.title[0] !== ''}
 							<div
-								class="font-medium dark:text-gray-300 dark:group-hover:text-gray-200 transition line-clamp-1"
+								class="suggestion-item-title font-medium dark:text-gray-300 dark:group-hover:text-gray-200 transition line-clamp-1"
 							>
 								{prompt.title[0]}
 							</div>
-							<div class="text-xs text-gray-600 dark:text-gray-400 font-normal line-clamp-1">
+							<div
+								class="suggestion-item-subtitle text-xs text-gray-600 dark:text-gray-400 font-normal line-clamp-1"
+							>
 								{prompt.title[1]}
 							</div>
 						{:else}
 							<div
-								class="font-medium dark:text-gray-300 dark:group-hover:text-gray-200 transition line-clamp-1"
+								class="suggestion-item-title font-medium dark:text-gray-300 dark:group-hover:text-gray-200 transition line-clamp-1"
 							>
 								{prompt.content}
 							</div>
-							<div class="text-xs text-gray-600 dark:text-gray-400 font-normal line-clamp-1">
+							<div
+								class="suggestion-item-subtitle text-xs text-gray-600 dark:text-gray-400 font-normal line-clamp-1"
+							>
 								{$i18n.t('Prompt')}
 							</div>
 						{/if}

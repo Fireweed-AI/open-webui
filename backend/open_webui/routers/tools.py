@@ -57,99 +57,146 @@ async def get_tools(request: Request, user=Depends(get_verified_user)):
     tools = []
 
     # Local Tools
-    for tool in Tools.get_tools():
-        tool_module = get_tool_module(request, tool.id)
-        tools.append(
-            ToolUserResponse(
-                **{
-                    **tool.model_dump(),
-                    "has_user_valves": hasattr(tool_module, "UserValves"),
-                }
+    try:
+        local_tools = Tools.get_tools() or []
+    except Exception as e:
+        log.exception(f"Failed to load local tools list: {e}")
+        local_tools = []
+
+    for tool in local_tools:
+        try:
+            tool_module = get_tool_module(request, tool.id)
+            tools.append(
+                ToolUserResponse(
+                    **{
+                        **tool.model_dump(),
+                        "has_user_valves": hasattr(tool_module, "UserValves"),
+                    }
+                )
             )
-        )
+        except Exception as e:
+            log.exception(f"Failed to load tool '{tool.id}': {e}")
 
     # OpenAPI Tool Servers
-    for server in await get_tool_servers(request):
-        tools.append(
-            ToolUserResponse(
-                **{
-                    "id": f"server:{server.get('id')}",
-                    "user_id": f"server:{server.get('id')}",
-                    "name": server.get("openapi", {})
-                    .get("info", {})
-                    .get("title", "Tool Server"),
-                    "meta": {
-                        "description": server.get("openapi", {})
-                        .get("info", {})
-                        .get("description", ""),
-                    },
-                    "access_control": request.app.state.config.TOOL_SERVER_CONNECTIONS[
-                        server.get("idx", 0)
-                    ]
+    try:
+        openapi_tool_servers = await get_tool_servers(request)
+    except Exception as e:
+        log.exception(f"Failed to fetch OpenAPI tool servers: {e}")
+        openapi_tool_servers = []
+
+    for server in openapi_tool_servers:
+        try:
+            tool_server_connections = request.app.state.config.TOOL_SERVER_CONNECTIONS or []
+            server_idx = server.get("idx", 0)
+            access_control = None
+            if (
+                isinstance(tool_server_connections, list)
+                and isinstance(server_idx, int)
+                and 0 <= server_idx < len(tool_server_connections)
+            ):
+                access_control = (
+                    tool_server_connections[server_idx]
                     .get("config", {})
-                    .get("access_control", None),
-                    "updated_at": int(time.time()),
-                    "created_at": int(time.time()),
-                }
-            )
-        )
-
-    # MCP Tool Servers
-    for server in request.app.state.config.TOOL_SERVER_CONNECTIONS:
-        if server.get("type", "openapi") == "mcp":
-            server_id = server.get("info", {}).get("id")
-            auth_type = server.get("auth_type", "none")
-
-            session_token = None
-            if auth_type == "oauth_2.1":
-                splits = server_id.split(":")
-                server_id = splits[-1] if len(splits) > 1 else server_id
-
-                session_token = (
-                    await request.app.state.oauth_client_manager.get_oauth_token(
-                        user.id, f"mcp:{server_id}"
-                    )
+                    .get("access_control", None)
                 )
 
             tools.append(
                 ToolUserResponse(
                     **{
-                        "id": f"server:mcp:{server.get('info', {}).get('id')}",
-                        "user_id": f"server:mcp:{server.get('info', {}).get('id')}",
-                        "name": server.get("info", {}).get("name", "MCP Tool Server"),
+                        "id": f"server:{server.get('id')}",
+                        "user_id": f"server:{server.get('id')}",
+                        "name": server.get("openapi", {})
+                        .get("info", {})
+                        .get("title", "Tool Server"),
                         "meta": {
-                            "description": server.get("info", {}).get(
-                                "description", ""
-                            ),
+                            "description": server.get("openapi", {})
+                            .get("info", {})
+                            .get("description", ""),
                         },
-                        "access_control": server.get("config", {}).get(
-                            "access_control", None
-                        ),
+                        "access_control": access_control,
                         "updated_at": int(time.time()),
                         "created_at": int(time.time()),
-                        **(
-                            {
-                                "authenticated": session_token is not None,
-                            }
-                            if auth_type == "oauth_2.1"
-                            else {}
-                        ),
                     }
                 )
             )
+        except Exception as e:
+            log.exception(
+                f"Failed to map OpenAPI tool server '{server.get('id', 'unknown')}': {e}"
+            )
+
+    # MCP Tool Servers
+    tool_server_connections = request.app.state.config.TOOL_SERVER_CONNECTIONS or []
+    for server in tool_server_connections:
+        if server.get("type", "openapi") == "mcp":
+            try:
+                server_id = server.get("info", {}).get("id")
+                auth_type = server.get("auth_type", "none")
+
+                session_token = None
+                if auth_type == "oauth_2.1" and server_id:
+                    splits = server_id.split(":")
+                    server_id = splits[-1] if len(splits) > 1 else server_id
+
+                    session_token = (
+                        await request.app.state.oauth_client_manager.get_oauth_token(
+                            user.id, f"mcp:{server_id}"
+                        )
+                    )
+
+                tools.append(
+                    ToolUserResponse(
+                        **{
+                            "id": f"server:mcp:{server.get('info', {}).get('id')}",
+                            "user_id": f"server:mcp:{server.get('info', {}).get('id')}",
+                            "name": server.get("info", {}).get("name", "MCP Tool Server"),
+                            "meta": {
+                                "description": server.get("info", {}).get(
+                                    "description", ""
+                                ),
+                            },
+                            "access_control": server.get("config", {}).get(
+                                "access_control", None
+                            ),
+                            "updated_at": int(time.time()),
+                            "created_at": int(time.time()),
+                            **(
+                                {
+                                    "authenticated": session_token is not None,
+                                }
+                                if auth_type == "oauth_2.1"
+                                else {}
+                            ),
+                        }
+                    )
+                )
+            except Exception as e:
+                log.exception(
+                    f"Failed to map MCP tool server '{server.get('info', {}).get('id', 'unknown')}': {e}"
+                )
 
     if user.role == "admin" and BYPASS_ADMIN_ACCESS_CONTROL:
         # Admin can see all tools
         return tools
     else:
-        user_group_ids = {group.id for group in Groups.get_groups_by_member_id(user.id)}
-        tools = [
-            tool
-            for tool in tools
-            if tool.user_id == user.id
-            or has_access(user.id, "read", tool.access_control, user_group_ids)
-        ]
-        return tools
+        try:
+            user_group_ids = {
+                group.id for group in (Groups.get_groups_by_member_id(user.id) or [])
+            }
+        except Exception as e:
+            log.exception(f"Failed to load groups for user '{user.id}': {e}")
+            user_group_ids = set()
+
+        filtered_tools = []
+        for tool in tools:
+            try:
+                if tool.user_id == user.id or has_access(
+                    user.id, "read", tool.access_control, user_group_ids
+                ):
+                    filtered_tools.append(tool)
+            except Exception as e:
+                log.exception(f"Failed access check for tool '{tool.id}': {e}")
+
+        return filtered_tools
 
 
 ############################

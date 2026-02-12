@@ -1166,31 +1166,24 @@ except Exception as e:
 if default_prompt_suggestions == []:
     default_prompt_suggestions = [
         {
-            "title": ["Help me study", "vocabulary for a college entrance exam"],
-            "content": "Help me study vocabulary: write a sentence for me to fill in the blank, and I'll try to pick the correct option.",
+            "title": ["Basic translation"],
+            "content": "Translate this English sentence into Gwich'in: Hello, how are you?",
         },
         {
-            "title": ["Give me ideas", "for what to do with my kids' art"],
-            "content": "What are 5 creative things I could do with my kids' art? I don't want to throw them away, but it's also so much clutter.",
+            "title": ["Gwich'in translation to English"],
+            "content": "What does the Gwich'in word gwik'e mean in English?",
         },
         {
-            "title": ["Tell me a fun fact", "about the Roman Empire"],
-            "content": "Tell me a random fun fact about the Roman Empire",
+            "title": ["English translation to Gwich'in"],
+            "content": "Create a short, simple sentence in Gwich'in using common everyday words.",
         },
         {
-            "title": ["Show me a code snippet", "of a website's sticky header"],
-            "content": "Show me a code snippet of a website's sticky header in CSS and JavaScript.",
+            "title": ["Gwich'in pronounciation assistance"],
+            "content": "How do you pronounce this Gwich'in word, and can you break it into syllables?",
         },
         {
-            "title": [
-                "Explain options trading",
-                "if I'm familiar with buying and selling stocks",
-            ],
-            "content": "Explain options trading in simple terms if I'm familiar with buying and selling stocks.",
-        },
-        {
-            "title": ["Overcome procrastination", "give me tips"],
-            "content": "Could you start by asking me about instances when I procrastinate the most and then give me some suggestions to overcome it?",
+            "title": ["Gwich'in grammar assistance"],
+            "content": "Is this Gwich'in sentence grammatically correct? If not, correct it and explain why.",
         },
     ]
 

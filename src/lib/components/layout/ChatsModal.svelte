@@ -81,6 +81,7 @@
 			<div class=" text-lg font-medium self-center">{title}</div>
 			<button
 				class="self-center"
+				aria-label={$i18n.t('Close')}
 				on:click={() => {
 					show = false;
 				}}
@@ -261,6 +262,7 @@
 												<Tooltip content={$i18n.t('Unarchive Chat')}>
 													<button
 														class="self-center w-fit px-1 text-sm rounded-xl"
+														aria-label={$i18n.t('Unarchive Chat')}
 														on:click={async (e) => {
 															e.stopImmediatePropagation();
 															e.stopPropagation();
@@ -288,6 +290,7 @@
 											<Tooltip content={$i18n.t('Delete Chat')}>
 												<button
 													class="self-center w-fit px-1 text-sm rounded-xl"
+													aria-label={$i18n.t('Delete Chat')}
 													on:click={async (e) => {
 														e.stopImmediatePropagation();
 														e.stopPropagation();
@@ -360,7 +363,7 @@
 												<th scope="col" class="px-3 py-2 hidden md:flex">
 													{$i18n.t('Created At')}
 												</th>
-												<th scope="col" class="px-3 py-2 text-right" />
+												<th scope="col" class="px-3 py-2 text-right"></th>
 											</tr>
 										</thead>
 										<tbody>

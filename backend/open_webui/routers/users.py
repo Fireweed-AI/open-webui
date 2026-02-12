@@ -2,6 +2,7 @@ import logging
 from typing import Optional
 import base64
 import io
+from pathlib import Path
 
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
@@ -449,15 +450,17 @@ async def get_user_profile_image_by_id(user_id: str, user=Depends(get_verified_u
     user = Users.get_user_by_id(user_id)
     if user:
         if user.profile_image_url:
+            profile_image_url = user.profile_image_url
+
             # check if it's url or base64
-            if user.profile_image_url.startswith("http"):
+            if profile_image_url.startswith("http"):
                 return Response(
                     status_code=status.HTTP_302_FOUND,
-                    headers={"Location": user.profile_image_url},
+                    headers={"Location": profile_image_url},
                 )
-            elif user.profile_image_url.startswith("data:image"):
+            elif profile_image_url.startswith("data:image"):
                 try:
-                    header, base64_data = user.profile_image_url.split(",", 1)
+                    header, base64_data = profile_image_url.split(",", 1)
                     image_data = base64.b64decode(base64_data)
                     image_buffer = io.BytesIO(image_data)
 
@@ -468,6 +471,21 @@ async def get_user_profile_image_by_id(user_id: str, user=Depends(get_verified_u
                     )
                 except Exception as e:
                     pass
+            elif profile_image_url.startswith("/"):
+                # Allow profile images that point to local static assets.
+                relative_path = profile_image_url.split("?", 1)[0].split("#", 1)[0].lstrip("/")
+                if relative_path.startswith("static/"):
+                    relative_path = relative_path[len("static/") :]
+                static_root = Path(STATIC_DIR).resolve()
+                candidate_path = (static_root / relative_path).resolve()
+
+                try:
+                    candidate_path.relative_to(static_root)
+                except ValueError:
+                    log.warning("Rejected unsafe profile image path: %s", profile_image_url)
+                else:
+                    if candidate_path.is_file():
+                        return FileResponse(candidate_path)
         return FileResponse(f"{STATIC_DIR}/user.png")
     else:
         raise HTTPException(

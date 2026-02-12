@@ -118,6 +118,16 @@
 	let selectedValvesType = 'tool'; // 'tool' or 'function'
 	let selectedValvesItemId = null;
 	let integrationsMenuCloseOnOutsideClick = true;
+	let showInputMenu = false;
+	let showIntegrationsMenu = false;
+	let hasActiveIntegrations = false;
+
+	$: hasActiveIntegrations =
+		(selectedToolIds ?? []).length > 0 ||
+		(selectedFilterIds ?? []).length > 0 ||
+		webSearchEnabled ||
+		imageGenerationEnabled ||
+		codeInterpreterEnabled;
 
 	$: if (!showValvesModal) {
 		integrationsMenuCloseOnOutsideClick = true;
@@ -970,6 +980,7 @@
 						>
 							<button
 								class=" bg-white border border-gray-100 dark:border-none dark:bg-white/20 p-1.5 rounded-full pointer-events-auto"
+								aria-label={$i18n.t('Scroll to bottom')}
 								on:click={() => {
 									autoScroll = true;
 									scrollToBottom();
@@ -1054,8 +1065,9 @@
 						<button
 							id="generate-message-pair-button"
 							class="hidden"
+							aria-label={$i18n.t('Generate message pair')}
 							on:click={() => createMessagePair(prompt)}
-						/>
+						></button>
 
 						<div
 							id="message-input-container"
@@ -1375,6 +1387,7 @@
 							<div class=" flex justify-between mt-0.5 mb-2.5 mx-0.5 max-w-full" dir="ltr">
 								<div class="ml-1 self-end flex items-center flex-1 max-w-[80%]">
 									<InputMenu
+										bind:show={showInputMenu}
 										bind:files
 										selectedModels={atSelectedModel ? [atSelectedModel.id] : selectedModels}
 										{fileUploadCapableModels}
@@ -1430,7 +1443,9 @@
 									>
 										<div
 											id="input-menu-button"
-											class="bg-transparent hover:bg-gray-100 text-gray-700 dark:text-white dark:hover:bg-gray-800 rounded-full size-8 flex justify-center items-center outline-hidden focus:outline-hidden"
+											class="bg-transparent text-gray-700 dark:text-white rounded-full size-8 flex justify-center items-center outline-hidden focus:outline-hidden {showInputMenu
+												? 'prompt-control-active'
+												: ''}"
 										>
 											<PlusAlt className="size-5.5" />
 										</div>
@@ -1439,9 +1454,10 @@
 									{#if showWebSearchButton || showImageGenerationButton || showCodeInterpreterButton || showToolsButton || (toggleFilters && toggleFilters.length > 0)}
 										<div
 											class="flex self-center w-[1px] h-4 mx-1 bg-gray-200/50 dark:bg-gray-800/50"
-										/>
+										></div>
 
 										<IntegrationsMenu
+											bind:show={showIntegrationsMenu}
 											selectedModels={atSelectedModel ? [atSelectedModel.id] : selectedModels}
 											{toggleFilters}
 											{showWebSearchButton}
@@ -1469,7 +1485,10 @@
 										>
 											<div
 												id="integration-menu-button"
-												class="bg-transparent hover:bg-gray-100 text-gray-700 dark:text-white dark:hover:bg-gray-800 rounded-full size-8 flex justify-center items-center outline-hidden focus:outline-hidden"
+												class="bg-transparent text-gray-700 dark:text-white rounded-full size-8 flex justify-center items-center outline-hidden focus:outline-hidden {(showIntegrationsMenu ||
+												hasActiveIntegrations)
+													? 'prompt-control-active'
+													: ''}"
 											>
 												<Component className="size-4.5" strokeWidth="1.5" />
 											</div>
@@ -1482,7 +1501,7 @@
 												<button
 													type="button"
 													id="model-valves-button"
-													class="bg-transparent hover:bg-gray-100 text-gray-700 dark:text-white dark:hover:bg-gray-800 rounded-full size-8 flex justify-center items-center outline-hidden focus:outline-hidden"
+													class="bg-transparent text-gray-700 dark:text-white rounded-full size-8 flex justify-center items-center outline-hidden focus:outline-hidden"
 													on:click={() => {
 														selectedValvesType = 'function';
 														selectedValvesItemId = selectedModelIds[0]?.split('.')[0];
@@ -1531,7 +1550,7 @@
 														class="group p-[7px] flex gap-1.5 items-center text-sm rounded-full transition-colors duration-300 focus:outline-hidden max-w-full overflow-hidden {selectedFilterIds.includes(
 															filterId
 														)
-															? 'text-sky-500 dark:text-sky-300 bg-sky-50 hover:bg-sky-100 dark:bg-sky-400/10 dark:hover:bg-sky-600/10 border border-sky-200/40 dark:border-sky-500/20'
+															? 'text-indigo-500 dark:text-indigo-300 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-400/10 dark:hover:bg-indigo-600/10 border border-indigo-200/40 dark:border-indigo-500/20'
 															: 'bg-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 '} capitalize"
 													>
 														{#if filter?.icon}
@@ -1563,7 +1582,7 @@
 													type="button"
 													class="group p-[7px] flex gap-1.5 items-center text-sm rounded-full transition-colors duration-300 focus:outline-hidden max-w-full overflow-hidden {webSearchEnabled ||
 													($settings?.webSearch ?? false) === 'always'
-														? ' text-sky-500 dark:text-sky-300 bg-sky-50 hover:bg-sky-100 dark:bg-sky-400/10 dark:hover:bg-sky-600/10 border border-sky-200/40 dark:border-sky-500/20'
+														? ' text-indigo-500 dark:text-indigo-300 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-400/10 dark:hover:bg-indigo-600/10 border border-indigo-200/40 dark:border-indigo-500/20'
 														: 'bg-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 '}"
 												>
 													<GlobeAlt className="size-4" strokeWidth="1.75" />
@@ -1581,7 +1600,7 @@
 														(imageGenerationEnabled = !imageGenerationEnabled)}
 													type="button"
 													class="group p-[7px] flex gap-1.5 items-center text-sm rounded-full transition-colors duration-300 focus:outline-hidden max-w-full overflow-hidden {imageGenerationEnabled
-														? ' text-sky-500 dark:text-sky-300 bg-sky-50 hover:bg-sky-100 dark:bg-sky-400/10 dark:hover:bg-sky-700/10 border border-sky-200/40 dark:border-sky-500/20'
+														? ' text-indigo-500 dark:text-indigo-300 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-400/10 dark:hover:bg-indigo-700/10 border border-indigo-200/40 dark:border-indigo-500/20'
 														: 'bg-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 '}"
 												>
 													<Photo className="size-4" strokeWidth="1.75" />
@@ -1603,7 +1622,7 @@
 														(codeInterpreterEnabled = !codeInterpreterEnabled)}
 													type="button"
 													class=" group p-[7px] flex gap-1.5 items-center text-sm transition-colors duration-300 max-w-full overflow-hidden {codeInterpreterEnabled
-														? ' text-sky-500 dark:text-sky-300 bg-sky-50 hover:bg-sky-100 dark:bg-sky-400/10 dark:hover:bg-sky-700/10 border border-sky-200/40 dark:border-sky-500/20'
+														? ' text-indigo-500 dark:text-indigo-300 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-400/10 dark:hover:bg-indigo-700/10 border border-indigo-200/40 dark:border-indigo-500/20'
 														: 'bg-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 '} {($settings?.highContrastMode ??
 													false)
 														? 'm-1'
@@ -1676,6 +1695,7 @@
 											<Tooltip content={$i18n.t('Stop')}>
 												<button
 													class="bg-white hover:bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-800 transition rounded-full p-1.5"
+													aria-label={$i18n.t('Stop')}
 													on:click={() => {
 														stopResponse();
 													}}
@@ -1700,6 +1720,7 @@
 											<!-- {$i18n.t('Call')} -->
 											<Tooltip content={$i18n.t('Voice mode')}>
 												<button
+													id="prompt-call-button"
 													class=" bg-black text-white hover:bg-gray-900 dark:bg-white dark:text-black dark:hover:bg-gray-100 transition rounded-full p-1.5 self-center"
 													type="button"
 													on:click={async () => {
@@ -1766,6 +1787,7 @@
 													class="{!(prompt === '' && files.length === 0)
 														? 'bg-black text-white hover:bg-gray-900 dark:bg-white dark:text-black dark:hover:bg-gray-100 '
 														: 'text-white bg-gray-200 dark:text-gray-900 dark:bg-gray-700 disabled'} transition rounded-full p-1.5 self-center"
+													aria-label={$i18n.t('Send message')}
 													type="submit"
 													disabled={prompt === '' && files.length === 0}
 												>
@@ -1794,7 +1816,7 @@
 								{@html DOMPurify.sanitize(marked($config?.license_metadata?.input_footer))}
 							</div>
 						{:else}
-							<div class="mb-1" />
+							<div class="mb-1"></div>
 						{/if}
 					</form>
 				</div>

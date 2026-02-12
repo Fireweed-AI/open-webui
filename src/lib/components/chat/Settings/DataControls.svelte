@@ -247,6 +247,7 @@
 					<div class="flex space-x-1.5 items-center">
 						<button
 							class="hover:text-white transition"
+							aria-label={$i18n.t('Confirm')}
 							on:click={() => {
 								archiveAllChatsHandler();
 								showArchiveConfirm = false;
@@ -267,6 +268,7 @@
 						</button>
 						<button
 							class="hover:text-white transition"
+							aria-label={$i18n.t('Cancel')}
 							on:click={() => {
 								showArchiveConfirm = false;
 							}}
@@ -334,6 +336,7 @@
 					<div class="flex space-x-1.5 items-center">
 						<button
 							class="hover:text-white transition"
+							aria-label={$i18n.t('Confirm')}
 							on:click={() => {
 								deleteAllChatsHandler();
 								showDeleteConfirm = false;
@@ -354,6 +357,7 @@
 						</button>
 						<button
 							class="hover:text-white transition"
+							aria-label={$i18n.t('Cancel')}
 							on:click={() => {
 								showDeleteConfirm = false;
 							}}
