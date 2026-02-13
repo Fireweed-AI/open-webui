@@ -1107,6 +1107,13 @@ async def process_chat_payload(request, form_data, user, metadata, model):
     form_data = apply_params_to_form_data(form_data, model)
     log.debug(f"form_data: {form_data}")
 
+    # Apply default system prompt from config (can be overridden by user/folder/model prompts)
+    default_system_prompt = request.app.state.config.DEFAULT_SYSTEM_PROMPT
+    if default_system_prompt:
+        form_data = apply_system_prompt_to_body(
+            default_system_prompt, form_data, metadata, user
+        )
+
     system_message = get_system_message(form_data.get("messages", []))
     if system_message:  # Chat Controls/User Settings
         try:
