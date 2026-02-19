@@ -14,8 +14,8 @@
 	export let getModels: Function;
 
 	// General
-	let themes = ['dark', 'light', 'oled-dark'];
-	let selectedTheme = 'system';
+	let themes = ['dark', 'light', 'oled-dark', 'her'];
+	let selectedTheme = 'dark';
 
 	let languages: Awaited<ReturnType<typeof getLanguages>> = [];
 	let lang = $i18n.language;
@@ -108,7 +108,8 @@
 	};
 
 	onMount(async () => {
-		selectedTheme = localStorage.theme ?? 'system';
+		selectedTheme = 'dark';
+		localStorage.setItem('theme', 'dark');
 
 		languages = await getLanguages();
 
@@ -183,10 +184,11 @@
 		console.log(_theme);
 	};
 
-	const themeChangeHandler = (_theme: string) => {
-		theme.set(_theme);
-		localStorage.setItem('theme', _theme);
-		applyTheme(_theme);
+	const themeChangeHandler = () => {
+		theme.set('dark');
+		localStorage.setItem('theme', 'dark');
+		selectedTheme = 'dark';
+		applyTheme('dark');
 	};
 </script>
 
@@ -204,7 +206,8 @@
 							: 'outline-hidden'}"
 						bind:value={selectedTheme}
 						placeholder={$i18n.t('Select a theme')}
-						on:change={() => themeChangeHandler(selectedTheme)}
+						on:change={themeChangeHandler}
+						disabled
 					>
 						<option value="system">⚙️ {$i18n.t('System')}</option>
 						<option value="dark">🌑 {$i18n.t('Dark')}</option>
