@@ -1,0 +1,58 @@
+name: Promote to Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version tag for the production image (e.g. v1.0.0)'
+        required: true
+        type: string
+
+env:
+  IMAGE_NAME: open-webui
+  PROD_ACR_NAME: acrfireweedprod
+  PROD_ACR_LOGIN_SERVER: acrfireweedprod.azurecr.io
+  CONTAINER_APP_NAME: ca-fireweedai-prod
+  RESOURCE_GROUP: rg-fireweed-prod
+
+jobs:
+  promote-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Login to Dev ACR
+        run: az acr login --name ${{ secrets.ACR_LOGIN_SERVER }}
+
+      - name: Login to Prod ACR
+        run: az acr login --name ${{ env.PROD_ACR_NAME }}
+
+      - name: Pull dev image, retag, and push to prod
+        run: |
+          DEV_IMAGE="${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest"
+          PROD_IMAGE="${{ env.PROD_ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}"
+
+          docker pull "$DEV_IMAGE"
+          docker tag "$DEV_IMAGE" "$PROD_IMAGE:${{ inputs.version }}"
+          docker tag "$DEV_IMAGE" "$PROD_IMAGE:latest"
+          docker push "$PROD_IMAGE:${{ inputs.version }}"
+          docker push "$PROD_IMAGE:latest"
+
+      - name: Deploy to Production Container App
+        run: |
+          az containerapp update \
+            --name ${{ env.CONTAINER_APP_NAME }} \
+            --resource-group ${{ env.RESOURCE_GROUP }} \
+            --image ${{ env.PROD_ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ inputs.version }}
+
+      - name: Verify deployment
+        run: |
+          echo "Promoted ${{ env.IMAGE_NAME }}:latest (dev) → ${{ inputs.version }} (prod)"
+          az containerapp show \
+            --name ${{ env.CONTAINER_APP_NAME }} \
+            --resource-group ${{ env.RESOURCE_GROUP }} \
+            --query "properties.latestRevisionName" -o tsv
