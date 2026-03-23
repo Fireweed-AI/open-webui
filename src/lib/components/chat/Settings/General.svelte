@@ -239,8 +239,7 @@
 					</select>
 				</div>
 			</div>
-			{#if $i18n.language === 'en-US' && !($config?.license_metadata ?? false)}
-			{/if}
+			{#if $i18n.language === 'en-US' && !($config?.license_metadata ?? false)}{/if}
 
 			<div>
 				<div class=" py-0.5 flex w-full justify-between">
@@ -264,7 +263,7 @@
 		</div>
 
 		{#if $user?.role === 'admin' || (($user?.permissions.chat?.controls ?? true) && ($user?.permissions.chat?.system_prompt ?? true))}
-			<hr class="border-gray-100/30 dark:border-gray-850/30 my-3"  />
+			<hr class="border-gray-100/30 dark:border-gray-850/30 my-3" />
 
 			<div>
 				<div class=" my-2.5 text-sm font-medium">{$i18n.t('System Prompt')}</div>
@@ -276,7 +275,7 @@
 							: '  dark:text-gray-300 ')}
 					rows="4"
 					placeholder={$i18n.t('Enter system prompt here')}
-				 />
+				/>
 			</div>
 		{/if}
 
@@ -296,7 +295,7 @@
 				</div>
 
 				{#if showAdvanced}
-					<AdvancedParams admin={$user?.role === 'admin'} bind:params  />
+					<AdvancedParams admin={$user?.role === 'admin'} bind:params />
 				{/if}
 			</div>
 		{/if}
