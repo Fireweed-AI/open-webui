@@ -108,8 +108,8 @@
 	};
 
 	onMount(async () => {
-		selectedTheme = 'dark';
-		localStorage.setItem('theme', 'dark');
+		selectedTheme = 
+		localStorage.getItem('theme') ?? 'system';
 
 		languages = await getLanguages();
 
@@ -185,10 +185,9 @@
 	};
 
 	const themeChangeHandler = () => {
-		theme.set('dark');
-		localStorage.setItem('theme', 'dark');
-		selectedTheme = 'dark';
-		applyTheme('dark');
+		theme.set(selectedTheme);
+		localStorage.setItem('theme', selectedTheme);
+		applyTheme(selectedTheme);
 	};
 </script>
 
@@ -207,7 +206,6 @@
 						bind:value={selectedTheme}
 						placeholder={$i18n.t('Select a theme')}
 						on:change={themeChangeHandler}
-						disabled
 					>
 						<option value="system">⚙️ {$i18n.t('System')}</option>
 						<option value="dark">🌑 {$i18n.t('Dark')}</option>
