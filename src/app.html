@@ -44,10 +44,47 @@
 			// On page load or when changing themes, best to add inline in `head` to avoid FOUC
 			(() => {
 				const metaThemeColorTag = document.querySelector('meta[name="theme-color"]');
-				localStorage.theme = 'dark';
-				document.documentElement.classList.remove('light', 'her');
-				document.documentElement.classList.add('dark');
-				metaThemeColorTag.setAttribute('content', '#171717');
+				const systemThemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+				const setTheme = (theme) => {
+					document.documentElement.classList.remove('dark', 'light', 'her');
+
+					if (theme === 'system') {
+						const resolvedTheme = systemThemeQuery.matches ? 'dark' : 'light';
+						document.documentElement.classList.add(resolvedTheme);
+						metaThemeColorTag?.setAttribute(
+							'content',
+							resolvedTheme === 'dark' ? '#171717' : '#ffffff'
+						);
+					} else if (theme === 'light') {
+						document.documentElement.classList.add('light');
+						metaThemeColorTag?.setAttribute('content', '#ffffff');
+					} else {
+						document.documentElement.classList.add('dark');
+						metaThemeColorTag?.setAttribute('content', '#171717');
+					}
+				};
+
+				const savedTheme = localStorage.getItem('theme');
+				if (!savedTheme) {
+					localStorage.setItem('theme', 'system');
+				} else if (!['system', 'dark', 'light'].includes(savedTheme)) {
+					localStorage.setItem('theme', 'system');
+				}
+
+				setTheme(localStorage.getItem('theme'));
+
+				const handleSystemThemeChange = () => {
+					if (localStorage.getItem('theme') === 'system') {
+						setTheme('system');
+					}
+				};
+
+				if (typeof systemThemeQuery.addEventListener === 'function') {
+					systemThemeQuery.addEventListener('change', handleSystemThemeChange);
+				} else {
+					systemThemeQuery.addListener(handleSystemThemeChange);
+				}
 
 				const isDarkMode = document.documentElement.classList.contains('dark');
 
