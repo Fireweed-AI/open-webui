@@ -52,7 +52,10 @@
 					if (theme === 'system') {
 						const resolvedTheme = systemThemeQuery.matches ? 'dark' : 'light';
 						document.documentElement.classList.add(resolvedTheme);
-						metaThemeColorTag?.setAttribute('content', resolvedTheme === 'dark' ? '#171717' : '#ffffff');
+						metaThemeColorTag?.setAttribute(
+							'content',
+							resolvedTheme === 'dark' ? '#171717' : '#ffffff'
+						);
 					} else if (theme === 'light') {
 						document.documentElement.classList.add('light');
 						metaThemeColorTag?.setAttribute('content', '#ffffff');

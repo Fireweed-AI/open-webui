@@ -1485,8 +1485,8 @@
 										>
 											<div
 												id="integration-menu-button"
-												class="bg-transparent text-gray-700 dark:text-white rounded-full size-8 flex justify-center items-center outline-hidden focus:outline-hidden {(showIntegrationsMenu ||
-												hasActiveIntegrations)
+												class="bg-transparent text-gray-700 dark:text-white rounded-full size-8 flex justify-center items-center outline-hidden focus:outline-hidden {showIntegrationsMenu ||
+												hasActiveIntegrations
 													? 'prompt-control-active'
 													: ''}"
 											>
