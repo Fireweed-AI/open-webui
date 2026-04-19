@@ -14,8 +14,8 @@
 	export let getModels: Function;
 
 	// General
-	let themes = ['dark', 'light', 'oled-dark', 'her'];
-	let selectedTheme = 'dark';
+	let themes = ['dark', 'light'];
+	let selectedTheme = 'system';
 
 	let languages: Awaited<ReturnType<typeof getLanguages>> = [];
 	let lang = $i18n.language;
@@ -108,8 +108,11 @@
 	};
 
 	onMount(async () => {
-		selectedTheme = 
-		localStorage.getItem('theme') ?? 'system';
+		const savedTheme = localStorage.getItem('theme');
+		selectedTheme =
+			savedTheme === 'system' || savedTheme === 'dark' || savedTheme === 'light'
+				? savedTheme
+				: 'system';
 
 		languages = await getLanguages();
 
@@ -121,13 +124,13 @@
 	});
 
 	const applyTheme = (_theme: string) => {
-		let themeToApply = _theme === 'oled-dark' ? 'dark' : _theme === 'her' ? 'light' : _theme;
+		let themeToApply = _theme;
 
-		if (_theme === 'system') {
+		if (themeToApply === 'system') {
 			themeToApply = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 		}
 
-		if (themeToApply === 'dark' && !_theme.includes('oled')) {
+		if (themeToApply === 'dark') {
 			document.documentElement.style.setProperty('--color-gray-800', '#333');
 			document.documentElement.style.setProperty('--color-gray-850', '#262626');
 			document.documentElement.style.setProperty('--color-gray-900', '#171717');
@@ -141,6 +144,7 @@
 					document.documentElement.classList.remove(e);
 				});
 			});
+		document.documentElement.classList.remove('her');
 
 		themeToApply.split(' ').forEach((e) => {
 			document.documentElement.classList.add(e);
@@ -148,7 +152,7 @@
 
 		const metaThemeColor = document.querySelector('meta[name="theme-color"]');
 		if (metaThemeColor) {
-			if (_theme.includes('system')) {
+			if (_theme === 'system') {
 				const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
 					? 'dark'
 					: 'light';
@@ -156,29 +160,12 @@
 				metaThemeColor.setAttribute('content', systemTheme === 'light' ? '#ffffff' : '#171717');
 			} else {
 				console.log('Setting meta theme color: ' + _theme);
-				metaThemeColor.setAttribute(
-					'content',
-					_theme === 'dark'
-						? '#171717'
-						: _theme === 'oled-dark'
-							? '#000000'
-							: _theme === 'her'
-								? '#983724'
-								: '#ffffff'
-				);
+				metaThemeColor.setAttribute('content', _theme === 'dark' ? '#171717' : '#ffffff');
 			}
 		}
 
 		if (typeof window !== 'undefined' && window.applyTheme) {
 			window.applyTheme();
-		}
-
-		if (_theme.includes('oled')) {
-			document.documentElement.style.setProperty('--color-gray-800', '#101010');
-			document.documentElement.style.setProperty('--color-gray-850', '#050505');
-			document.documentElement.style.setProperty('--color-gray-900', '#000000');
-			document.documentElement.style.setProperty('--color-gray-950', '#000000');
-			document.documentElement.classList.add('dark');
 		}
 
 		console.log(_theme);
@@ -207,13 +194,9 @@
 						placeholder={$i18n.t('Select a theme')}
 						on:change={themeChangeHandler}
 					>
-						<option value="system">⚙️ {$i18n.t('System')}</option>
-						<option value="dark">🌑 {$i18n.t('Dark')}</option>
-						<option value="oled-dark">🌃 {$i18n.t('OLED Dark')}</option>
-						<option value="light">☀️ {$i18n.t('Light')}</option>
-						<option value="her">🌷 Her</option>
-						<!-- <option value="rose-pine dark">🪻 {$i18n.t('Rosé Pine')}</option>
-						<option value="rose-pine-dawn light">🌷 {$i18n.t('Rosé Pine Dawn')}</option> -->
+						<option value="system">{$i18n.t('System')}</option>
+						<option value="dark">{$i18n.t('Dark')}</option>
+						<option value="light">{$i18n.t('Light')}</option>
 					</select>
 				</div>
 			</div>
