@@ -33,9 +33,39 @@
 /* --app-text-scale is updated via the UI Scale slider (Interface.svelte) */
 :root {
 	--app-text-scale: 1;
+	--primary: #5b21b6;
+	--brand-purple-rgb: 91 33 182;
+	--brand-purple-on-soft-rgb: 76 29 149;
+	--brand-purple-on-soft-strong-rgb: 59 7 100;
+	--brand-purple-muted-rgb: 88 28 135;
+	--brand-purple-auth-title-rgb: 59 7 100;
+	--brand-purple-auth-label-rgb: 76 29 149;
+	--brand-purple-auth-placeholder-rgb: 107 114 128;
+	--brand-purple-control-rgb: 76 29 149;
+	--brand-purple-control-focus-rgb: 59 7 100;
+	--brand-purple-focus: #5b21b6;
+	--brand-purple-toggle: #5b21b6;
+	/* Accent-only purple branding */
+	--color-blue-500: #5b21b6;
+	--color-blue-600: #4c1d95;
+	--color-indigo-500: #5b21b6;
+	--color-indigo-600: #4c1d95;
+	--color-purple-500: #5b21b6;
+}
+
+html.dark {
 	--primary: #7338a0;
 	--brand-purple-rgb: 115 56 160;
-	/* Accent-only purple branding */
+	--brand-purple-on-soft-rgb: 236 224 247;
+	--brand-purple-on-soft-strong-rgb: 246 236 255;
+	--brand-purple-muted-rgb: 203 180 223;
+	--brand-purple-auth-title-rgb: 252 249 255;
+	--brand-purple-auth-label-rgb: 213 203 226;
+	--brand-purple-auth-placeholder-rgb: 157 144 175;
+	--brand-purple-control-rgb: 196 183 212;
+	--brand-purple-control-focus-rgb: 226 214 242;
+	--brand-purple-focus: #7338a0;
+	--brand-purple-toggle: #632f8a;
 	--color-blue-500: #7338a0;
 	--color-blue-600: #632f8a;
 	--color-indigo-500: #7338a0;
@@ -127,18 +157,18 @@ html body [role='menuitem'][data-state='open'],
 html body [class*='focus:bg-gray-']:focus,
 html.dark body [class*='dark:focus:bg-gray-']:focus {
 	background-color: rgb(var(--brand-purple-rgb) / 0.16);
-	color: rgb(236 224 247 / 0.98);
+	color: rgb(var(--brand-purple-on-soft-rgb) / 0.98);
 }
 
 html body [class*='active:bg-gray-']:not(:disabled):not(#sidebar):active,
 html.dark body [class*='dark:active:bg-gray-']:not(:disabled):not(#sidebar):active {
 	background-color: rgb(var(--brand-purple-rgb) / 0.22);
-	color: rgb(246 236 255 / 0.99);
+	color: rgb(var(--brand-purple-on-soft-strong-rgb) / 0.99);
 }
 
 .selected-command-option-button {
 	background-color: rgb(var(--brand-purple-rgb) / 0.16);
-	color: rgb(236 224 247 / 0.98);
+	color: rgb(var(--brand-purple-on-soft-rgb) / 0.98);
 }
 
 .selected-command-option-button:hover {
@@ -209,6 +239,13 @@ html.dark body [class*='dark:active:bg-gray-']:not(:disabled):not(#sidebar):acti
 		inset 0 0 0 1px rgb(255 255 255 / 0.12),
 		0 8px 18px rgb(var(--brand-purple-rgb) / 0.2);
 	transform: translateY(-1px);
+}
+
+html:not(.dark) body button[class*='bg-black'][class*='text-white'][class*='dark:hover:bg-gray-100']:not(:disabled):not(#sidebar):hover,
+html:not(.dark) body button[class*='bg-black'][class*='text-white'][class*='dark:hover:bg-gray-100']:not(:disabled):not(#sidebar):focus-visible,
+html:not(.dark) body .save-message-button:not(:disabled):not(#sidebar):hover,
+html:not(.dark) body .save-message-button:not(:disabled):not(#sidebar):focus-visible {
+	color: #fff;
 }
 
 .save-action-button:active,
@@ -404,22 +441,39 @@ html:not(.dark) #auth-page input:-webkit-autofill:active {
 
 /* Additional auth-page accents so the CTA is primary but the screen still feels branded. */
 #auth-page #logo {
-	filter: drop-shadow(0 0 10px rgb(var(--brand-purple-rgb) / 0.22));
+	filter: none;
+}
+
+html:not(.dark) #auth-page #logo {
+	width: 7rem;
+	height: 7rem;
 }
 
 #auth-page .text-2xl.font-medium {
 	font-weight: 600;
 	letter-spacing: 0.01em;
-	color: rgb(252 249 255 / 0.99);
 	text-shadow: 0 0 14px rgb(var(--brand-purple-rgb) / 0.22);
 }
 
+html:not(.dark) #auth-page .text-2xl.font-medium {
+	color: rgb(17 24 39 / 0.99) !important;
+	text-shadow: none !important;
+}
+
+html.dark #auth-page .text-2xl.font-medium {
+	color: rgb(var(--brand-purple-auth-title-rgb) / 0.99);
+}
+
 #auth-page label:not(.sr-only) {
-	color: rgb(213 203 226 / 0.94);
+	color: rgb(var(--brand-purple-auth-label-rgb) / 0.94);
+}
+
+html:not(.dark) #auth-page label:not(.sr-only) {
+	color: rgb(31 41 55 / 0.96);
 }
 
 #auth-page input::placeholder {
-	color: rgb(157 144 175 / 0.9);
+	color: rgb(var(--brand-purple-auth-placeholder-rgb) / 0.9);
 }
 
 html.dark #auth-page input::placeholder {
@@ -427,17 +481,17 @@ html.dark #auth-page input::placeholder {
 }
 
 #auth-page .flex.flex-1.bg-transparent > button[type='button'] {
-	color: rgb(196 183 212 / 0.9);
+	color: rgb(var(--brand-purple-control-rgb) / 0.9);
 	border-radius: 9999px;
 }
 
 #auth-page .flex.flex-1.bg-transparent:focus-within > button[type='button'] {
-	color: rgb(226 214 242 / 0.96);
+	color: rgb(var(--brand-purple-control-focus-rgb) / 0.96);
 }
 
 #auth-page .flex.flex-1.bg-transparent > button[type='button']:hover {
 	background-color: rgb(var(--brand-purple-rgb) / 0.14);
-	color: rgb(235 224 247 / 0.98);
+	color: rgb(var(--brand-purple-on-soft-rgb) / 0.98);
 }
 
 /* Extra subtle purple accents for chat chrome and suggestion areas. */
@@ -459,12 +513,34 @@ html.dark #auth-page input::placeholder {
 }
 
 .model-set-default-button {
-	color: rgb(148 151 159 / 0.94);
-	transition: color 120ms ease;
+	border-radius: 9999px;
+	padding: 0.1rem 0.45rem;
+	transition:
+		color 120ms ease,
+		background-color 120ms ease,
+		box-shadow 120ms ease;
 }
 
-.model-set-default-button:hover {
+html:not(.dark) .model-set-default-button {
+	color: rgb(148 151 159 / 0.94);
+}
+
+html:not(.dark) .model-set-default-button:hover,
+html:not(.dark) .model-set-default-button:focus-visible {
+	color: rgb(var(--brand-purple-rgb) / 1);
+	background-color: rgb(var(--brand-purple-rgb) / 0.1);
+	box-shadow: inset 0 0 0 1px rgb(var(--brand-purple-rgb) / 0.18);
+}
+
+html.dark .model-set-default-button {
 	color: rgb(186 189 198 / 0.98);
+}
+
+html.dark .model-set-default-button:hover,
+html.dark .model-set-default-button:focus-visible {
+	color: rgb(var(--brand-purple-on-soft-rgb) / 0.98);
+	background-color: rgb(var(--brand-purple-rgb) / 0.12);
+	box-shadow: inset 0 0 0 1px rgb(var(--brand-purple-rgb) / 0.2);
 }
 
 .chat-hero-model-title {
@@ -491,11 +567,11 @@ html.dark #auth-page input::placeholder {
 }
 
 .suggestion-item:hover .suggestion-item-title {
-	color: rgb(236 224 247 / 0.98);
+	color: rgb(var(--brand-purple-on-soft-rgb) / 0.98);
 }
 
 .suggestion-item:hover .suggestion-item-subtitle {
-	color: rgb(203 180 223 / 0.9);
+	color: rgb(var(--brand-purple-muted-rgb) / 0.9);
 }
 
 #temporary-chat-button,
