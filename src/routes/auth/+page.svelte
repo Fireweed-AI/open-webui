@@ -129,7 +129,8 @@
 	};
 
 	let onboarding = false;
-	const AUTH_LOGO_SRC = `${WEBUI_BASE_URL}/static/splash-dark.png`;
+	const AUTH_LOGO_LIGHT_SRC = `${WEBUI_BASE_URL}/static/splash.png`;
+	const AUTH_LOGO_DARK_SRC = `${WEBUI_BASE_URL}/static/splash-dark.png`;
 	const AUTH_FAVICON_SRC = `/static/favicon.png`;
 	const AUTH_FAVICON_DARK_SRC = `${WEBUI_BASE_URL}/static/favicon-dark.png`;
 
@@ -138,18 +139,19 @@
 		const logo = document.getElementById('logo');
 
 		if (!logo) return;
+		const isDarkMode = document.documentElement.classList.contains('dark');
+		const authLogoSrc = isDarkMode ? AUTH_LOGO_DARK_SRC : AUTH_LOGO_LIGHT_SRC;
 
 		const logoImage = new Image();
-		logoImage.src = AUTH_LOGO_SRC;
+		logoImage.src = authLogoSrc;
 
 		logoImage.onload = () => {
-			logo.src = AUTH_LOGO_SRC;
+			logo.src = authLogoSrc;
 			logo.style.filter = '';
 		};
 
 		logoImage.onerror = () => {
 			logo.src = AUTH_FAVICON_SRC;
-			const isDarkMode = document.documentElement.classList.contains('dark');
 
 			if (!isDarkMode) {
 				logo.style.filter = '';
@@ -245,8 +247,8 @@
 								<img
 									id="logo"
 									crossorigin="anonymous"
-									src={AUTH_LOGO_SRC}
-									class="h-14 w-14 object-contain"
+									src={AUTH_LOGO_LIGHT_SRC}
+									class="h-20 w-20 object-contain"
 									alt="{$WEBUI_NAME} logo"
 								/>
 							</div>
