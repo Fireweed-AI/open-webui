@@ -2391,6 +2391,42 @@ GOOGLE_DRIVE_API_KEY = PersistentConfig(
     os.environ.get("GOOGLE_DRIVE_API_KEY", ""),
 )
 
+GDRIVE_SERVICE_ACCOUNT_JSON = PersistentConfig(
+    "GDRIVE_SERVICE_ACCOUNT_JSON",
+    "integrations.gdrive.service_account_json",
+    os.environ.get("GDRIVE_SERVICE_ACCOUNT_JSON", ""),
+)
+
+GDRIVE_WATCH_FOLDER_ID = PersistentConfig(
+    "GDRIVE_WATCH_FOLDER_ID",
+    "integrations.gdrive.watch_folder_id",
+    os.environ.get("GDRIVE_WATCH_FOLDER_ID", ""),
+)
+
+GDRIVE_WEBHOOK_TOKEN = PersistentConfig(
+    "GDRIVE_WEBHOOK_TOKEN",
+    "integrations.gdrive.webhook_token",
+    os.environ.get("GDRIVE_WEBHOOK_TOKEN", ""),
+)
+
+GDRIVE_KNOWLEDGE_ID = PersistentConfig(
+    "GDRIVE_KNOWLEDGE_ID",
+    "integrations.gdrive.knowledge_id",
+    os.environ.get("GDRIVE_KNOWLEDGE_ID", ""),
+)
+
+gdrive_access_control = os.environ.get("GDRIVE_ACCESS_CONTROL", "{}")
+try:
+    gdrive_access_control = json.loads(gdrive_access_control)
+except json.JSONDecodeError:
+    gdrive_access_control = {}
+
+GDRIVE_ACCESS_CONTROL = PersistentConfig(
+    "GDRIVE_ACCESS_CONTROL",
+    "integrations.gdrive.access_control",
+    gdrive_access_control,
+)
+
 ENABLE_ONEDRIVE_INTEGRATION = PersistentConfig(
     "ENABLE_ONEDRIVE_INTEGRATION",
     "onedrive.enable",
@@ -2423,6 +2459,48 @@ ONEDRIVE_SHAREPOINT_TENANT_ID = PersistentConfig(
     "ONEDRIVE_SHAREPOINT_TENANT_ID",
     "onedrive.sharepoint_tenant_id",
     os.environ.get("ONEDRIVE_SHAREPOINT_TENANT_ID", ""),
+)
+
+SHAREPOINT_TENANT_ID = PersistentConfig(
+    "SHAREPOINT_TENANT_ID",
+    "integrations.sharepoint.tenant_id",
+    os.environ.get("SHAREPOINT_TENANT_ID", ""),
+)
+
+SHAREPOINT_CLIENT_ID = PersistentConfig(
+    "SHAREPOINT_CLIENT_ID",
+    "integrations.sharepoint.client_id",
+    os.environ.get("SHAREPOINT_CLIENT_ID", ""),
+)
+
+SHAREPOINT_CLIENT_SECRET = PersistentConfig(
+    "SHAREPOINT_CLIENT_SECRET",
+    "integrations.sharepoint.client_secret",
+    os.environ.get("SHAREPOINT_CLIENT_SECRET", ""),
+)
+
+SHAREPOINT_SITE_URL = PersistentConfig(
+    "SHAREPOINT_SITE_URL",
+    "integrations.sharepoint.site_url",
+    os.environ.get("SHAREPOINT_SITE_URL", ""),
+)
+
+SHAREPOINT_KNOWLEDGE_ID = PersistentConfig(
+    "SHAREPOINT_KNOWLEDGE_ID",
+    "integrations.sharepoint.knowledge_id",
+    os.environ.get("SHAREPOINT_KNOWLEDGE_ID", ""),
+)
+
+sharepoint_access_control = os.environ.get("SHAREPOINT_ACCESS_CONTROL", "{}")
+try:
+    sharepoint_access_control = json.loads(sharepoint_access_control)
+except json.JSONDecodeError:
+    sharepoint_access_control = {}
+
+SHAREPOINT_ACCESS_CONTROL = PersistentConfig(
+    "SHAREPOINT_ACCESS_CONTROL",
+    "integrations.sharepoint.access_control",
+    sharepoint_access_control,
 )
 
 # RAG Content Extraction

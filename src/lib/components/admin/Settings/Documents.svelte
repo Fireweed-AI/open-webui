@@ -17,12 +17,14 @@
 		updateRAGConfig
 	} from '$lib/apis/retrieval';
 
-	import { reindexKnowledgeFiles } from '$lib/apis/knowledge';
+	import { getKnowledgeBaseList, reindexKnowledgeFiles } from '$lib/apis/knowledge';
 	import { deleteAllFiles } from '$lib/apis/files';
+	import { getSourcesConfig, updateSourcesConfig } from '$lib/apis/integrations';
 
 	import ResetUploadDirConfirmDialog from '$lib/components/common/ConfirmDialog.svelte';
 	import ResetVectorDBConfirmDialog from '$lib/components/common/ConfirmDialog.svelte';
 	import ReindexKnowledgeFilesConfirmDialog from '$lib/components/common/ConfirmDialog.svelte';
+	import ExternalSources from './Documents/ExternalSources.svelte';
 	import SensitiveInput from '$lib/components/common/SensitiveInput.svelte';
 	import Tooltip from '$lib/components/common/Tooltip.svelte';
 	import Switch from '$lib/components/common/Switch.svelte';
@@ -64,6 +66,26 @@
 	};
 
 	let RAGConfig = null;
+	let knowledgeBases = [];
+	let sourceConfig = {
+		gdrive: {
+			enabled: false,
+			service_account_json: '',
+			watch_folder_id: '',
+			webhook_token: '',
+			knowledge_base_id: '',
+			access_control: {}
+		},
+		sharepoint: {
+			enabled: false,
+			tenant_id: '',
+			client_id: '',
+			client_secret: '',
+			site_url: '',
+			knowledge_base_id: '',
+			access_control: {}
+		}
+	};
 
 	const embeddingModelUpdateHandler = async () => {
 		if (RAG_EMBEDDING_ENGINE === '' && RAG_EMBEDDING_MODEL.split('/').length - 1 > 1) {
@@ -217,6 +239,8 @@
 		}
 
 		const res = await updateRAGConfig(localStorage.token, {
+			ENABLE_GOOGLE_DRIVE_INTEGRATION: sourceConfig.gdrive.enabled,
+			ENABLE_ONEDRIVE_INTEGRATION: sourceConfig.sharepoint.enabled,
 			...RAGConfig,
 			ALLOWED_FILE_EXTENSIONS: RAGConfig.ALLOWED_FILE_EXTENSIONS.split(',')
 				.map((ext) => ext.trim())
@@ -230,7 +254,19 @@
 					? JSON.parse(RAGConfig.MINERU_PARAMS)
 					: {}
 		});
-		dispatch('save');
+
+		if (!res) {
+			return;
+		}
+
+		const sourceRes = await updateSourcesConfig(localStorage.token, sourceConfig).catch((error) => {
+			toast.error(`${error}`);
+			return null;
+		});
+
+		if (sourceRes) {
+			dispatch('save');
+		}
 	};
 
 	const setEmbeddingConfig = async () => {
@@ -268,6 +304,22 @@
 			typeof config.MINERU_PARAMS === 'object'
 				? JSON.stringify(config.MINERU_PARAMS ?? {}, null, 2)
 				: config.MINERU_PARAMS;
+
+		knowledgeBases = await getKnowledgeBaseList(localStorage.token).catch((error) => {
+			toast.error(`${error}`);
+			return [];
+		});
+
+		const sources = await getSourcesConfig(localStorage.token).catch((error) => {
+			toast.error(`${error}`);
+			return null;
+		});
+
+		if (sources) {
+			sourceConfig = sources;
+			config.ENABLE_GOOGLE_DRIVE_INTEGRATION = sources.gdrive?.enabled ?? false;
+			config.ENABLE_ONEDRIVE_INTEGRATION = sources.sharepoint?.enabled ?? false;
+		}
 
 		RAGConfig = config;
 	});
@@ -1334,25 +1386,7 @@
 					</div>
 				</div>
 
-				<div class="mb-3">
-					<div class=" mt-0.5 mb-2.5 text-base font-medium">{$i18n.t('Integration')}</div>
-
-					<hr class=" border-gray-100/30 dark:border-gray-850/30 my-2" />
-
-					<div class="  mb-2.5 flex w-full justify-between">
-						<div class=" self-center text-xs font-medium">{$i18n.t('Google Drive')}</div>
-						<div class="flex items-center relative">
-							<Switch bind:state={RAGConfig.ENABLE_GOOGLE_DRIVE_INTEGRATION} />
-						</div>
-					</div>
-
-					<div class="  mb-2.5 flex w-full justify-between">
-						<div class=" self-center text-xs font-medium">{$i18n.t('OneDrive')}</div>
-						<div class="flex items-center relative">
-							<Switch bind:state={RAGConfig.ENABLE_ONEDRIVE_INTEGRATION} />
-						</div>
-					</div>
-				</div>
+				<ExternalSources bind:sourceConfig {knowledgeBases} />
 
 				<div class="mb-3">
 					<div class=" mt-0.5 mb-2.5 text-base font-medium">{$i18n.t('Danger Zone')}</div>
