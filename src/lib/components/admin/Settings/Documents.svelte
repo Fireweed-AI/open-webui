@@ -19,7 +19,6 @@
 
 	import { getKnowledgeBaseList, reindexKnowledgeFiles } from '$lib/apis/knowledge';
 	import { deleteAllFiles } from '$lib/apis/files';
-	import { getSourcesConfig, updateSourcesConfig } from '$lib/apis/integrations';
 
 	import ResetUploadDirConfirmDialog from '$lib/components/common/ConfirmDialog.svelte';
 	import ResetVectorDBConfirmDialog from '$lib/components/common/ConfirmDialog.svelte';
@@ -67,25 +66,6 @@
 
 	let RAGConfig = null;
 	let knowledgeBases = [];
-	let sourceConfig = {
-		gdrive: {
-			enabled: false,
-			service_account_json: '',
-			watch_folder_id: '',
-			webhook_token: '',
-			knowledge_base_id: '',
-			access_control: {}
-		},
-		sharepoint: {
-			enabled: false,
-			tenant_id: '',
-			client_id: '',
-			client_secret: '',
-			site_url: '',
-			knowledge_base_id: '',
-			access_control: {}
-		}
-	};
 
 	const embeddingModelUpdateHandler = async () => {
 		if (RAG_EMBEDDING_ENGINE === '' && RAG_EMBEDDING_MODEL.split('/').length - 1 > 1) {
@@ -239,8 +219,6 @@
 		}
 
 		const res = await updateRAGConfig(localStorage.token, {
-			ENABLE_GOOGLE_DRIVE_INTEGRATION: sourceConfig.gdrive.enabled,
-			ENABLE_ONEDRIVE_INTEGRATION: sourceConfig.sharepoint.enabled,
 			...RAGConfig,
 			ALLOWED_FILE_EXTENSIONS: RAGConfig.ALLOWED_FILE_EXTENSIONS.split(',')
 				.map((ext) => ext.trim())
@@ -258,15 +236,7 @@
 		if (!res) {
 			return;
 		}
-
-		const sourceRes = await updateSourcesConfig(localStorage.token, sourceConfig).catch((error) => {
-			toast.error(`${error}`);
-			return null;
-		});
-
-		if (sourceRes) {
-			dispatch('save');
-		}
+		dispatch('save');
 	};
 
 	const setEmbeddingConfig = async () => {
@@ -309,17 +279,6 @@
 			toast.error(`${error}`);
 			return [];
 		});
-
-		const sources = await getSourcesConfig(localStorage.token).catch((error) => {
-			toast.error(`${error}`);
-			return null;
-		});
-
-		if (sources) {
-			sourceConfig = sources;
-			config.ENABLE_GOOGLE_DRIVE_INTEGRATION = sources.gdrive?.enabled ?? false;
-			config.ENABLE_ONEDRIVE_INTEGRATION = sources.sharepoint?.enabled ?? false;
-		}
 
 		RAGConfig = config;
 	});
@@ -1386,7 +1345,7 @@
 					</div>
 				</div>
 
-				<ExternalSources bind:sourceConfig {knowledgeBases} />
+				<ExternalSources {knowledgeBases} />
 
 				<div class="mb-3">
 					<div class=" mt-0.5 mb-2.5 text-base font-medium">{$i18n.t('Danger Zone')}</div>

@@ -2385,10 +2385,22 @@ GOOGLE_DRIVE_CLIENT_ID = PersistentConfig(
     os.environ.get("GOOGLE_DRIVE_CLIENT_ID", ""),
 )
 
+GOOGLE_DRIVE_CLIENT_SECRET = PersistentConfig(
+    "GOOGLE_DRIVE_CLIENT_SECRET",
+    "google_drive.client_secret",
+    os.environ.get("GOOGLE_DRIVE_CLIENT_SECRET", ""),
+)
+
 GOOGLE_DRIVE_API_KEY = PersistentConfig(
     "GOOGLE_DRIVE_API_KEY",
     "google_drive.api_key",
     os.environ.get("GOOGLE_DRIVE_API_KEY", ""),
+)
+
+GOOGLE_DRIVE_PROJECT_NUMBER = PersistentConfig(
+    "GOOGLE_DRIVE_PROJECT_NUMBER",
+    "google_drive.project_number",
+    os.environ.get("GOOGLE_DRIVE_PROJECT_NUMBER", ""),
 )
 
 GDRIVE_SERVICE_ACCOUNT_JSON = PersistentConfig(

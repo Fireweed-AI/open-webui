@@ -96,6 +96,7 @@ from open_webui.routers import (
     slack,
     teams,
     external_sources,
+    source_connections,
 )
 
 from open_webui.routers.retrieval import (
@@ -325,7 +326,9 @@ from open_webui.config import (
     GOOGLE_PSE_API_KEY,
     GOOGLE_PSE_ENGINE_ID,
     GOOGLE_DRIVE_CLIENT_ID,
+    GOOGLE_DRIVE_CLIENT_SECRET,
     GOOGLE_DRIVE_API_KEY,
+    GOOGLE_DRIVE_PROJECT_NUMBER,
     GDRIVE_SERVICE_ACCOUNT_JSON,
     GDRIVE_WATCH_FOLDER_ID,
     GDRIVE_WEBHOOK_TOKEN,
@@ -944,6 +947,10 @@ app.state.config.BYPASS_WEB_SEARCH_EMBEDDING_AND_RETRIEVAL = (
 app.state.config.BYPASS_WEB_SEARCH_WEB_LOADER = BYPASS_WEB_SEARCH_WEB_LOADER
 
 app.state.config.ENABLE_GOOGLE_DRIVE_INTEGRATION = ENABLE_GOOGLE_DRIVE_INTEGRATION
+app.state.config.GOOGLE_DRIVE_CLIENT_ID = GOOGLE_DRIVE_CLIENT_ID
+app.state.config.GOOGLE_DRIVE_CLIENT_SECRET = GOOGLE_DRIVE_CLIENT_SECRET
+app.state.config.GOOGLE_DRIVE_API_KEY = GOOGLE_DRIVE_API_KEY
+app.state.config.GOOGLE_DRIVE_PROJECT_NUMBER = GOOGLE_DRIVE_PROJECT_NUMBER
 app.state.config.ENABLE_ONEDRIVE_INTEGRATION = ENABLE_ONEDRIVE_INTEGRATION
 app.state.config.GDRIVE_SERVICE_ACCOUNT_JSON = GDRIVE_SERVICE_ACCOUNT_JSON
 app.state.config.GDRIVE_WATCH_FOLDER_ID = GDRIVE_WATCH_FOLDER_ID
@@ -1422,6 +1429,7 @@ app.include_router(functions.router, prefix="/api/v1/functions", tags=["function
 app.include_router(slack.router, tags=["slack"])
 app.include_router(teams.router, tags=["teams"])
 app.include_router(external_sources.router, tags=["external-sources"])
+app.include_router(source_connections.router, tags=["source-connections"])
 app.include_router(
     evaluations.router, prefix="/api/v1/evaluations", tags=["evaluations"]
 )
@@ -1933,6 +1941,7 @@ async def get_app_config(request: Request):
                 "google_drive": {
                     "client_id": GOOGLE_DRIVE_CLIENT_ID.value,
                     "api_key": GOOGLE_DRIVE_API_KEY.value,
+                    "project_number": GOOGLE_DRIVE_PROJECT_NUMBER.value,
                 },
                 "onedrive": {
                     "client_id_personal": ONEDRIVE_CLIENT_ID_PERSONAL,

@@ -65,15 +65,36 @@ def ensure_knowledge_base(
     return created.id
 
 
-def _find_existing_external_file(source: str, external_id: str):
+def _find_existing_external_file(
+    source: str, external_id: str, source_connection_id: str | None = None
+):
     for file in Files.get_files():
         meta_data = ((file.meta or {}).get("data") or {})
-        if (
-            meta_data.get("external_source") == source
-            and meta_data.get("external_id") == external_id
+        if meta_data.get("external_source") != source:
+            continue
+        if source_connection_id is not None and (
+            meta_data.get("external_source_connection_id") != source_connection_id
         ):
+            continue
+        if meta_data.get("external_id") == external_id:
             return file
     return None
+
+
+def get_existing_external_file(
+    source: str, external_id: str, source_connection_id: str | None = None
+):
+    return _find_existing_external_file(source, external_id, source_connection_id)
+
+
+def ensure_external_file_in_knowledge(
+    knowledge_id: str, file_id: str, user_id: str
+) -> None:
+    existing_knowledge_ids = {
+        knowledge.id for knowledge in Knowledges.get_knowledges_by_file_id(file_id)
+    }
+    if knowledge_id not in existing_knowledge_ids:
+        Knowledges.add_file_to_knowledge_by_id(knowledge_id, file_id, user_id)
 
 
 def upsert_external_file(
@@ -88,8 +109,10 @@ def upsert_external_file(
     extra_meta: dict[str, Any] | None = None,
     process_content: str | None = None,
     access_control: dict | None = None,
+    source_connection_id: str | None = None,
+    source_provider_id: str | None = None,
 ) -> str:
-    existing = _find_existing_external_file(source, external_id)
+    existing = _find_existing_external_file(source, external_id, source_connection_id)
     if existing is not None:
         for knowledge in Knowledges.get_knowledges_by_file_id(existing.id):
             Knowledges.remove_file_from_knowledge_by_id(knowledge.id, existing.id)
@@ -127,6 +150,8 @@ def upsert_external_file(
                 "collection_name": knowledge_id,
                 "data": {
                     "external_source": source,
+                    "external_source_provider_id": source_provider_id or source,
+                    "external_source_connection_id": source_connection_id,
                     "external_id": external_id,
                     **(extra_meta or {}),
                 },
