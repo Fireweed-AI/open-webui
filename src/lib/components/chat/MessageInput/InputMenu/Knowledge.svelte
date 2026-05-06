@@ -65,40 +65,13 @@
 				...item,
 				type: 'collection'
 			}));
-		``;
-		let collection_files =
-			$knowledge.length > 0
-				? [
-						...$knowledge
-							.reduce((a, item) => {
-								return [
-									...new Set([
-										...a,
-										...(item?.files ?? []).map((file) => ({
-											...file,
-											collection: { name: item.name, description: item.description } // DO NOT REMOVE, USED IN FILE DESCRIPTION/ATTACHMENT
-										}))
-									])
-								];
-							}, [])
-							.map((file) => ({
-								...file,
-								name: file?.meta?.name,
-								description: `${file?.collection?.name} - ${file?.collection?.description}`,
-								knowledge: true, // DO NOT REMOVE, USED TO INDICATE KNOWLEDGE BASE FILE
-								type: 'file'
-							}))
-					]
-				: [];
 
-		items = [...collections, ...collection_files, ...legacy_collections, ...legacy_documents].map(
-			(item) => {
-				return {
-					...item,
-					...(item?.legacy || item?.meta?.legacy || item?.meta?.document ? { legacy: true } : {})
-				};
-			}
-		);
+		items = [...collections, ...legacy_collections, ...legacy_documents].map((item) => {
+			return {
+				...item,
+				...(item?.legacy || item?.meta?.legacy || item?.meta?.document ? { legacy: true } : {})
+			};
+		});
 
 		await tick();
 
