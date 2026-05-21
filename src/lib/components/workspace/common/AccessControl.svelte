@@ -161,7 +161,10 @@
 								<div class="flex items-center gap-3 justify-between text-sm w-full transition">
 									<div class="flex items-center gap-1.5 w-full">
 										<div>
-											{group.name} <span class="text-xs text-gray-500">{group?.member_count}</span>
+											{group.name}
+											<span class="text-xs text-gray-500">
+												{group?.member_count} {$i18n.t('members')}
+											</span>
 										</div>
 									</div>
 
@@ -224,9 +227,8 @@
 							<div class="flex flex-1 items-center">
 								<div class="w-full px-0.5">
 									<select
-										class="dark:bg-gray-900 outline-hidden bg-transparent text-sm block w-full pr-10 max-w-full
-									{selectedGroupId ? '' : 'text-gray-500'}
-									dark:placeholder-gray-500"
+										class="block w-full max-w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 pr-10 text-sm text-gray-800 outline-hidden transition hover:border-gray-300 hover:bg-white dark:border-gray-800 dark:bg-gray-900/50 dark:text-gray-200 dark:hover:border-gray-700 dark:hover:bg-gray-900
+									{selectedGroupId ? '' : 'text-gray-500 dark:text-gray-400'}"
 										bind:value={selectedGroupId}
 										on:change={() => {
 											if (selectedGroupId !== '') {
@@ -240,11 +242,13 @@
 											}
 										}}
 									>
-										<option class=" text-gray-700" value="" disabled selected
+										<option class="text-gray-700 dark:text-gray-200" value="" disabled selected
 											>{$i18n.t('Select a group')}</option
 										>
 										{#each groups.filter((group) => !(accessControl?.read?.group_ids ?? []).includes(group.id)) as group}
-											<option class=" text-gray-700" value={group.id}>{group.name}</option>
+											<option class="text-gray-700 dark:text-gray-200" value={group.id}
+												>{group.name}</option
+											>
 										{/each}
 									</select>
 								</div>

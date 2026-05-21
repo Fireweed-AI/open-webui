@@ -4,6 +4,7 @@ import mimetypes
 import os
 import shutil
 import asyncio
+from concurrent.futures import ThreadPoolExecutor
 
 import re
 import uuid
@@ -223,6 +224,18 @@ def get_rf(
 
 
 router = APIRouter()
+
+
+def _run_coro_sync(coro):
+    """Run a coroutine from sync code in both sync and async server contexts."""
+    try:
+        asyncio.get_running_loop()
+    except RuntimeError:
+        return asyncio.run(coro)
+
+    with ThreadPoolExecutor(max_workers=1) as executor:
+        future = executor.submit(asyncio.run, coro)
+        return future.result()
 
 
 class CollectionNameForm(BaseModel):
@@ -1404,7 +1417,7 @@ def save_docs_to_vector_db(
         )
 
         # Run async embedding in sync context
-        embeddings = asyncio.run(
+        embeddings = _run_coro_sync(
             embedding_function(
                 list(map(lambda x: x.replace("\n", " "), texts)),
                 prefix=RAG_EMBEDDING_CONTENT_PREFIX,
